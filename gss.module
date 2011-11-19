@@ -9,7 +9,7 @@
 function gss_menu() {
   $items = array();
   
-  $items['admin/config/google-site-search'] = array(
+  $items['admin/config/search/gss'] = array(
     'title' => 'Google Site Search',
     'description' => 'Google Site Search settings.',
     'page callback' => 'drupal_get_form',
