@@ -114,15 +114,61 @@ function gss_search_results($query) {
 
   // Include dependencies.
   module_load_include('inc', 'gss', 'includes/GoogleSiteSearch');
-  
   // Make query safe.
   $query = check_plain($query);
-  
   // Init GoogleSiteSearch object.
   $gss = new GoogleSiteSearch($query, variable_get('gss_api_key', ''));
-  
   // Get current page.
   $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+  // Init results variable.
+  $results = null;
+  // Set the number of results per page.
+  $gss->SetPageSize(variable_get('gss_page_size', 20));
+  // Perform search.
+  try {
+    $results = $gss->GetSearchResults($page);
+  }
+  catch(Exception $e) {
+     watchdog('gss', $e, NULL, WATCHDOG_ERROR);
+     drupal_set_message(t('Sorry, the search function is unavailable at this time.'));
+     exit();
+  }
+  // Get search summary.
+  $total_results = $gss->GetTotalResults();
+  $end_pos = $gss->GetCurrentPage() * $gss->GetPageSize();
+  $start_pos = $end_pos - $gss->GetPageSize() + 1;
+  
+  if ($end_pos > $total_results) {
+    $end_pos = $total_results;
+  }
+  // Build output.
+  if (!empty($results)) {
+    $output = array();
+    // Loop results.
+    foreach ($results as $result) {
+      $output[] = array(
+        'link' => urldecode($result['url']),
+        'title' => $result['title'],
+        'snippet' => $result['description'],
+        );
+    }
+  }
+  else {
+    $output[] = array(
+        'link' => '',
+        'title' => '',
+        'snippet' => t('No results'),
+        );
+  }
+  // Build URL to the pager  
+  $destination = drupal_get_destination();  
+  $url_parse = drupal_parse_url($destination['destination']);
+  $url_parse['query']['page'] = '';
+  $link = url($url_parse['path'], $url_parse);
+  // Get searrch head
+  $output['head'] = $gss->GetSearchHead();
+  // Get pager
+  $output['pager'] = $gss->GetPager($link);
   
   return $output;
 }
