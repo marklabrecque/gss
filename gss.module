@@ -9,6 +9,14 @@
 function gss_menu() {
   $items = array();
   
+  $items['admin/config/google-site-search'] = array(
+    'title' => 'Google Site Search',
+    'description' => 'Google Site Search settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gss_settings'),
+    'access arguments' => array('administer site settings'),
+  );
+  
   $items['google-search'] = array(
     'title' => t('Search'),
     'page callback' => 'search',
@@ -25,6 +33,23 @@ function gss_menu() {
   );
   
   return $items;
+}
+/**
+ * Implements hook_theme().
+ */
+function gss_theme($existing, $type, $theme, $path) {
+  return array(
+    'gss_result' => array(
+      'variables' => array('result' => NULL, 'module' => NULL),
+      'file' => 'gss.theme.inc',
+      'template' => 'gss-result',
+    ),
+    'gss_results' => array(
+      'variables' => array('results' => NULL, 'module' => NULL),
+      'file' => 'gss.theme.inc',
+      'template' => 'gss-results',
+    ),
+  );
 }
 /**
 * Module settings.
