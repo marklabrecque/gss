@@ -85,6 +85,47 @@ function gss_settings() {
   return system_settings_form($form);
 }
 
+/**
+* Implementation of hook_block().
+*/
+function gss_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0] = array(
+      'info' => t('Google Site Search'),
+      'weight' => 0,
+      'status' => 0,
+    );
+
+    return $blocks;
+  }
+  else if ($op == 'view') {
+    $block = array(
+      'subject' => t('Search'),
+      'content' => drupal_get_form('gss_search_form'),
+    );
+
+    return $block;
+  }
+}
+/**
+* Search results page.
+*/
+function gss_search_results($query) {
+
+  // Include dependencies.
+  module_load_include('inc', 'gss', 'includes/GoogleSiteSearch');
+  
+  // Make query safe.
+  $query = check_plain($query);
+  
+  // Init GoogleSiteSearch object.
+  $gss = new GoogleSiteSearch($query, variable_get('gss_api_key', ''));
+  
+  // Get current page.
+  $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+  
+  return $output;
+}
 
 
 
