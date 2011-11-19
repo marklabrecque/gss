@@ -4,6 +4,22 @@
   font-weight: bold;
   margin: 10px 0;
 }
+.google-search-results,
+.google-search-results .gss-result,
+.google-search-results .gss-result .gss-title,
+.google-search-results .gss-result .gss-search-snippet-info p,
+div.item-list,
+div.item-list ul.pager {  
+  margin: 0;
+} 
+.google-search-results {
+  padding: 0;
+}
+  
+.google-search-results li {
+  list-style: none;
+  padding: 15px 0;
+}  
 .google-search-results .gss-result .gss-title {
   font-weight: normal;
 }
