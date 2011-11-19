@@ -1,0 +1,70 @@
+<?php
+// $Id$
+
+
+
+/**
+* Implementation of hook_menu().
+*/
+function gss_menu() {
+  $items = array();
+  
+  $items['google-search'] = array(
+    'title' => t('Search'),
+    'page callback' => 'search',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['google-search/%'] = array(
+    'title' => t('Search results'),
+    'page callback' => 'gss_search_results',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
+  return $items;
+}
+/**
+* Module settings.
+*/
+function gss_settings() {
+  $form = array();
+  
+  $form['gss_api_key'] = array(
+    '#title' => t('API Key'),
+    '#type' => 'textfield',
+    '#description' => t('Your Google Site Search API key.'),
+    '#default_value' => variable_get('gss_api_key', ''),
+    '#required' => TRUE,
+  );
+  
+  $form['gss_page_size'] = array(
+    '#title' => t('Page size'),
+    '#type' => 'textfield',
+    '#description' => t('Number of results to display per page.'),
+    '#default_value' => variable_get('gss_page_size', 20),
+    '#size' => 5,
+    '#max_length' => 5,
+  );
+  $form['gss_results_tab'] = array(
+    '#title' => t('Search results tab name'),
+    '#type' => 'textfield',
+    '#maxlength' => 50,
+    '#size' => 60,
+    '#description' => t('Enter a custom name of the tab where search results are displayed (defaults to %google).', array('%google' => t('Google Search'))),
+    '#default_value' => variable_get('gss_results_tab', ''),
+  );
+  
+  return system_settings_form($form);
+}
+
+
+
+
+
+
+
+
+
