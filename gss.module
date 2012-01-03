@@ -15,20 +15,20 @@ function gss_menu() {
     'access arguments' => array('administer site settings'),
   );
   
-  $items['google-search'] = array(
-    'title' => t('Search'),
-    'page callback' => 'search',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-  
-  $items['google-search/%'] = array(
-    'title' => t('Search results'),
-    'page callback' => 'gss_search_results',
-    'page arguments' => array(1),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
+//  $items['google-search'] = array(
+//    'title' => t('Search'),
+//    'page callback' => 'search',
+//    'access arguments' => array('access content'),
+//    'type' => MENU_CALLBACK,
+//  );
+//  
+//  $items['google-search/%'] = array(
+//    'title' => t('Search results'),
+//    'page callback' => 'gss_search_results',
+//    'page arguments' => array(1),
+//    'access arguments' => array('access content'),
+//    'type' => MENU_CALLBACK,
+//  );
   
   return $items;
 }
@@ -62,7 +62,22 @@ function gss_settings() {
     '#default_value' => variable_get('gss_api_key', ''),
     '#required' => TRUE,
   );
-  
+  $form['gss_language'] = array(
+    '#title' => t('Language'),
+    '#type' => 'textfield',
+    '#description' => t('The language to search. Write the language code with two letters. Ex: for "english", write "en"; for "Chinese (Simplified)"'),
+    '#default_value' => variable_get('gss_language', ''),
+    '#size' => 5,
+    '#max_length' => 5,
+  );
+  $form['gss_default_language'] = array(
+    '#title' => t('Language'),
+    '#type' => 'checkbox',
+    '#description' => t('The language to search. Write the language code with two letters. Ex: for "english", write "en".'),
+    '#default_value' => variable_get('gss_default_language', FALSE),
+    '#size' => 2,
+    '#max_length' => 2,
+  );
   $form['gss_page_size'] = array(
     '#title' => t('Page size'),
     '#type' => 'textfield',
