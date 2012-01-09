@@ -179,21 +179,13 @@ function gss_search_results($query) {
  * Adds custom submit handler for search form.
  */
 function gss_form_search_form_alter(&$form, &$form_state, $form_id) {
-  if ($form['module']['#value'] == 'gss') {
-    if (variable_get('gss_results_gadget', 1)) {
-      $form['basic']['op']['#suffix'] = theme('gss_results_gadget');
-    }
-    $form['#submit'][] = 'gss_search_form_submit';
-    $form['#attributes']['class'][] = 'gss';
-  }
+  $form['#submit'][] = 'gss_search_form_submit';
+  $form['#attributes']['class'][] = 'gss';
 }
 /**
  * Implements hook_search_execute().
  */
 function gss_search_execute($keys = NULL, $conditions = NULL) {
-  if ($keys && !isset($_GET['query'])) {
-    drupal_goto('search/google-search/'. $keys, array('query' => gss_build_query($keys)), 301);
-  }
   return gss_search_results($keys);  
 }
 /**
@@ -202,7 +194,7 @@ function gss_search_execute($keys = NULL, $conditions = NULL) {
 function gss_search_info() {
   return array(
     'title' => gss_results_tab(),
-    'path' => 'google-search',
+    'path' => 'gss',
     'conditions_callback' => 'gss_conditions_callback',
   );
 }
@@ -220,64 +212,13 @@ function gss_results_tab() {
   return ($var = variable_get('gss_results_tab', '')) ? $var : t('Google Search');
 }
 /**
- * Returns an array of any advanced settings which have been set.
- */
-function gss_advanced_settings() {
-  global $language;
-  $settings = array();
-  foreach (array('cr', 'gl', 'hl', 'ie', 'lr', 'oe', 'safe') as $parameter) {
-    if ($setting = variable_get("google_cse_$parameter", '')) {
-      $settings[$parameter] = $setting;
-    }
-  }
-  if (variable_get('gss_locale_hl', '')) {
-    $settings['hl'] = $language->language;
-  }
-  if (variable_get('gss_locale_lr', '')) {
-    $settings['lr'] = 'lang_'. $language->language;
-  }
-  return $settings;
-}
-/**
- * Builds a query array based on Google Site Search settings.
- */
-function gss_build_query($keys, $sitesearch = NULL, $here = TRUE) {
-  return array(
-    'query' => $keys,
-    'cx' => variable_get('gss_api_key', ''),
-    'cof' => $here ? variable_get('google_cse_cof_here', 'FORID:11') : variable_get('google_cse_cof_google', 'FORID:0'),
-    'sitesearch' => isset($sitesearch) ? $sitesearch : '',
-  ) + gss_advanced_settings();
-}
-/**
-* Submit handler.
-*/
-function gss_search_form_submit($form, &$form_state) {
-  $keys = $form_state['values']['processed_keys'];
-  $sitesearch = isset($form_state['values']['sitesearch']) ? $form_state['values']['sitesearch'] : NULL;
-  $form_state['redirect'] = array($form_state['redirect'], array('query' => google_cse_build_query($keys, $sitesearch)), 301);
-}
-
-
-
-
-
-
-
-
-
-
-/**
 * Submit handler.
 */
 function gss_search_form_submit($form, &$form_state) {
   $check = _gss_check();
   if ($check) {
     $form_id = $form_state['values']['form_id'];
-    $keys = $form_state['values'][$form_id];
-    if (!$keys) {
-      $keys = $form_state['values']['processed_keys'];
-    }
+    $keys = $form_state['values']['processed_keys'];
     $form_state['redirect'] = array('search/gss/' . $keys);
   }
 }
@@ -285,7 +226,9 @@ function gss_search_form_submit($form, &$form_state) {
  * Implementation of hook_search_page().
  */
 function gss_search_page($results) {
-  return theme('gss_results', $results);
+  $output['#theme'] = 'gss_results';
+  $output['#results'] = $results;
+  return $output;
 }
 /**
  * Check if Google Site Search can run.

@@ -23,3 +23,28 @@ function template_preprocess_gss_result(&$variables) {
   $variables['snippet'] = isset($result['snippet']) ? $result['snippet'] : '';
 }
 
+/**
+ * Process variables for gss-results.tpl.php.
+ *
+ * The $variables array contains the following arguments:
+ * - $result
+ * - $module
+ *
+ * @see gss-results.tpl.php
+ */
+function template_preprocess_gss_results(&$variables) {
+  $results = $variables['results'];
+  $variables['head'] = $results['head'];
+  unset($results['head']);
+  $variables['pager'] = $results['pager'];
+  unset($results['pager']);
+  $variables['search_results'] = '';
+  foreach ($results as $entry) {
+    $variables['search_results'] .= theme('gss_result', array('result' => $entry));
+  }
+}
+
+
+
+
+
