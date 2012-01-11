@@ -2,22 +2,6 @@
 // $Id$
 
 /**
-* Implementation of hook_menu().
-*/
-function gss_menu() {
-  $items = array();
-  
-  $items['admin/config/search/gss'] = array(
-    'title' => 'Google Site Search',
-    'description' => 'Google Site Search settings.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('gss_settings'),
-    'access arguments' => array('administer site settings'),
-  );
-  
-  return $items;
-}
-/**
  * Implements hook_theme().
  */
 function gss_theme($existing, $type, $theme, $path) {
@@ -35,39 +19,51 @@ function gss_theme($existing, $type, $theme, $path) {
   );
 }
 /**
+ * Implements hook_search_admin().
+ */
+function gss_search_admin() {
+  return gss_settings();
+}
+/**
 * Module settings.
 */
 function gss_settings() {
   $form = array();
   
-  $form['main'] = array(
+  $form['gss'] = array(
+    '#title' => t('Google Site Search'),
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  
+  $form['gss']['main'] = array(
     '#type' => 'fieldset',
     '#title' => t('Main'),
     '#weight' => -10,
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
-  $form['main']['gss_enabled'] = array(
-    '#title' => t('Enable Google Site Search'),
+  $form['gss']['main']['gss_global'] = array(
+    '#title' => t('Make Google Site Search global'),
     '#type' => 'checkbox',
-    '#description' => t('This will show "Google Search" or custom tab in the search page. It will also make Google Site Search to default in the site search.'),
-    '#default_value' => variable_get('gss_enabled', FALSE),
+    '#description' => t('Let Google Site Search take over all search functions on the site.'),
+    '#default_value' => variable_get('gss_global', FALSE),
   );
-  $form['main']['gss_api_key'] = array(
+  $form['gss']['main']['gss_api_key'] = array(
     '#title' => t('API Key'),
     '#type' => 'textfield',
     '#description' => t('Your Google Site Search API key. If no key is given, the module will not work and will be disabled.'),
     '#default_value' => variable_get('gss_api_key', ''),
-//    '#required' => TRUE,
   );
-  $form['language'] = array(
+  $form['gss']['language'] = array(
     '#type' => 'fieldset',
     '#title' => t('Language'),
     '#weight' => -9,
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
-  $form['language']['gss_language'] = array(
+  $form['gss']['language']['gss_language'] = array(
     '#title' => t('Language'),
     '#type' => 'textfield',
     '#description' => t('The language to search. Write the language code with two letters.<br />Ex: for "english", input "en"; for "Chinese (Simplified)", input "zh-CN".'),
@@ -75,20 +71,20 @@ function gss_settings() {
     '#size' => 5,
     '#max_length' => 5,
   );
-  $form['language']['gss_default_language'] = array(
+  $form['gss']['language']['gss_default_language'] = array(
     '#title' => t('Use current site language'),
     '#type' => 'checkbox',
     '#description' => t('This setting will override the custom language above.'),
     '#default_value' => variable_get('gss_default_language', FALSE),
   );
-  $form['miscellaneous'] = array(
+  $form['gss']['miscellaneous'] = array(
     '#type' => 'fieldset',
     '#title' => t('Miscellaneous'),
     '#weight' => -8,
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
-  $form['miscellaneous']['gss_results_tab'] = array(
+  $form['gss']['miscellaneous']['gss_results_tab'] = array(
     '#title' => t('Search results tab name'),
     '#type' => 'textfield',
     '#maxlength' => 50,
@@ -96,7 +92,7 @@ function gss_settings() {
     '#description' => t('Enter a custom name of the tab where search results are displayed (defaults to %google).', array('%google' => t('Google Search'))),
     '#default_value' => variable_get('gss_results_tab', ''),
   );
-  $form['miscellaneous']['gss_page_size'] = array(
+  $form['gss']['miscellaneous']['gss_page_size'] = array(
     '#title' => t('Page size'),
     '#type' => 'textfield',
     '#description' => t('Number of results to display per page.'),
@@ -105,7 +101,8 @@ function gss_settings() {
     '#max_length' => 5,
   );
   
-  return system_settings_form($form);
+//  return system_settings_form($form);
+  return $form;
 }
 /**
 * Search results page.
@@ -234,13 +231,16 @@ function gss_search_page($results) {
  * Check if Google Site Search can run.
  */
 function _gss_check() {
-  $gss_enabled = variable_get('gss_enabled', FALSE);
-  if (!$gss_enabled) {
+  $gss_global = variable_get('gss_global', FALSE);
+  if (!$gss_global) {
     return FALSE;
   }
   $gss_api_key = variable_get('gss_api_key', FALSE);
   if (!$gss_api_key) {
-    variable_set('gss_enabled', 0);
+    $search_active_modules = variable_get('search_active_modules', array('node', 'user'));
+    // Disable Google Site Search if no Google API key is given
+    unset($search_active_modules['gss']);
+    variable_set('search_active_modules', $search_active_modules);
     return FALSE;
   }
   return TRUE;
