@@ -100,8 +100,15 @@ function gss_settings() {
     '#size' => 5,
     '#max_length' => 5,
   );
+  $form['gss']['miscellaneous']['gss_pager_size'] = array(
+    '#title' => t('Pager size'),
+    '#type' => 'textfield',
+    '#description' => t('Number of pages to show in the pager. Imput ONLY odd numbers like 5, 7 or 9 and NOT 6, 7 or 9, for example.'),
+    '#default_value' => variable_get('gss_pager_size', 19),
+    '#size' => 5,
+    '#max_length' => 5,
+  );
   
-//  return system_settings_form($form);
   return $form;
 }
 /**
@@ -121,6 +128,8 @@ function gss_search_results($query) {
   $results = null;
   // Set the number of results per page.
   $gss->SetPageSize(variable_get('gss_page_size', 20));
+  // Set the number of pages to show in the pager.
+  $gss->SetPagerSize(variable_get('gss_pager_size', 20));
   // Set the search language
   $default_lang = variable_get('gss_default_language', FALSE);
   if ($default_lang) {
