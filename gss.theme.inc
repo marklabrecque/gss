@@ -21,6 +21,8 @@ function template_preprocess_gss_result(&$variables) {
   $variables['title'] = $result['title'];
   // Check for existence. User search does not include snippets.
   $variables['snippet'] = isset($result['snippet']) ? $result['snippet'] : '';
+  // Check for existence
+  $variables['thumbnail_url'] = isset($result['thumbnail_url']) ? check_url($result['thumbnail_url']) : '';
 }
 
 /**

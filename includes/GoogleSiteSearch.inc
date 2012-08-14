@@ -18,7 +18,7 @@ class GoogleSiteSearch {
    * @var string
    */
   private $language = null;
-  
+
   /**
    * The search query.
    * @var string
@@ -94,7 +94,7 @@ class GoogleSiteSearch {
   public function SetLanguage($language) {
     $this->language = $language;
   }
-  
+
   /**
    * Set the page size.
    *
@@ -132,6 +132,7 @@ class GoogleSiteSearch {
   public function GetPagerSize() {
     return $this->pagerSize;
   }
+
   /**
    * Get current page in the results.
    *
@@ -182,9 +183,9 @@ class GoogleSiteSearch {
 
     // calculate start postition based on page
     $startPos = ($this->currentPage - 1) * $this->pageSize;
-    
+
     if ($this->language) {
-     $language = "&lr=lang_{$this->language}"; 
+      $language = "&lr=lang_{$this->language}";
     }
     else {
       $language = null;
@@ -195,7 +196,7 @@ class GoogleSiteSearch {
 
     // fetch results from google
     $results = simplexml_load_file($url);
-    
+
     if ($results !== false) {
       if (!isset($results->RES->M)) {
         // no results, return null
@@ -204,6 +205,16 @@ class GoogleSiteSearch {
       else {
         // save total results
         $this->totalResults = intval((string) $results->RES->M);
+
+        // store faceted items in order to use them later in the header
+        $categories = array();
+        foreach ($results->Context->Facet as $facet) {
+          $categories[] = array(
+            'label' => (string) $facet->FacetItem->label,
+            'anchor_text' => (string) $facet->FacetItem->anchor_text,
+          );
+        }
+        $this->categories = $categories;
 
         // init results array
         $arr = array();
@@ -215,9 +226,27 @@ class GoogleSiteSearch {
           $item['title'] = (string) $result->T;
           $item['url'] = (string) $result->UE;
           $item['description'] = (string) $result->S;
+          // let's get the image thumbnail - present in PageMap->DataObject['type'] == cse_thumbnail
+          if (isset($result->PageMap->DataObject)) {
+            foreach ($result->PageMap->DataObject as $do) {
+              switch ((string) $do['type']) {
+                case 'cse_thumbnail':
+                  //we are inside the thumbnail node, lets get the src attribute:
+                  foreach ($do->Attribute as $att) {
+                    switch ((string) $att['name']) {
+                      case 'src':
+                        $item['thumbnail_url'] = (string) $att['value'];
+                        break;
+                    }
+                  }
+                  break;
+              }
+            }
+          }
+
           $arr[] = $item;
         }
-        
+
         // return results
         return $arr;
       }
@@ -239,38 +268,38 @@ class GoogleSiteSearch {
     $currentPage = $this->GetCurrentPage();
     $pagerSize = $this->GetPagerSize();
     $halfPagerSize = $pagerSize / 2;
-    
+
     if ($totalPages < 2) {
       return;
-    }    
-    
+    }
+
     $html = "<div class=\"item-list google-search-pager\"><ul class=\"pager\">\n";
 
     // Limit the number of pages to 50
     $totalPages = $totalPages > 50 ? 50 : $totalPages;
-    
+
     if ($currentPage > 1) {
       $link_page = $link . ($currentPage - 1);
       $html .= "\t<li class=\"pager-previous\"><a href=\"{$link_page}\">" . t('‹ previous') . "</a></li>\n";
     }
-    
+
     // Defines the start and finish of the pager
     $pagerStart = $currentPage - (round($pagerSize / 2) - 1);
     $pagerFinish = $currentPage + (round($pagerSize / 2) - 1);
-    
+
     // Start values, if $pagerStart is negative
     if ($pagerStart < 1) {
       $pagerStart = 1;
       $pagerFinish = $pagerSize > $totalPages ? $totalPages : $pagerSize;
     }
-    
+
     // Limit $pagerFinish to the same as $totalPages
     $pagerFinish = $pagerFinish > $totalPages ? $totalPages : $pagerFinish;
-    
+
     if ($pagerStart > 1) {
       $html .= "\t<li class=\"pager-ellipsis\">...</li>\n";
     }
-    
+
     for ($i = $pagerStart; $i <= $pagerFinish; $i++) {
       if ($i != $currentPage) {
         $link_page = $link . $i;
@@ -280,24 +309,23 @@ class GoogleSiteSearch {
         $html .= "\t<li class=\"pager-current\">{$i}</li>\n";
       }
     }
-    
+
     if ($pagerFinish < $totalPages) {
       $html .= "\t<li class=\"pager-ellipsis\">...</li>\n";
     }
-    
+
     if ($currentPage < intval($totalPages)) {
       $link_page = $link . ($currentPage + 1);
       $html .= "\t<li class=\"pager-next\"><a href=\"{$link_page}\">" . t('next ›') . "</a></li>\n";
     }
-    
+
     // close ol
     $html .= "</ul></div>\n";
-    
+
     // return pager
     return $html;
   }
 
-  
   /**
    * Get a head to the search results.
    *
@@ -310,18 +338,54 @@ class GoogleSiteSearch {
     $currentPage = $this->GetCurrentPage();
     $show_start = ($pageSize * $currentPage) - $pageSize + 1;
     $show_end = ($pageSize * $currentPage);
-    
+
     $html = '<div class="searchhead">';
+
     
+    
+    
+    if (variable_get('gss_labels', TRUE) == 1) {print "test";
+      // adding the tabs for the search labels
+      $html .= '<span>' . t("Show only results of type:") . '</span><ul>';
+
+      // checking which one is the active tab
+      $active_html_first_element = "";
+      $active_html_others = "";
+      if (strpos($this->query, "more:") === false) { //there is no faceted search
+        $active_html_first_element = 'class="active"';   //then the first element is active
+        $term_from_query = "";
+      }
+      else {
+        $term_from_query = end(explode(":", $this->query));  //in this case we store the category to check later
+      }
+
+      $this->query = current(explode(" more:", $this->query)); //resume $this->query to its original value (no categories)
+      // first item will always be the original query
+      $html .= '<li>' . '<a ' . $active_html_first_element . ' href=' . urlencode($this->query) . '>' . t('All results') . '</a>' . '</li>';
+
+      //loop to create all remaining categorized tabs / queries
+      if ($totalResults > 0) {
+        foreach ($this->categories as $categ) {
+          $active_html_others = ""; //do not inherit from previous loop...
+          if ($categ['label'] == $term_from_query) {
+            $active_html_others = 'class="active"';
+          }
+          $new_query = urlencode($this->query) . '+more%3A' . $categ['label']; //builds up the path to the tab links
+          $html .= '<li>' . '<a ' . $active_html_others . ' href=' . $new_query . '>' . $categ['anchor_text'] . '</a>' . '</li>';
+        }
+      }
+
+      $html .= '</ul>';
+    }
+
     $html .= t('Shows') . ' ' . $show_start . ' ' . t('to') . ' ' . $show_end . ' ' . t('of') . ' ';
     $html .= t('approximately') . ' ' . $totalResults . ' ' . t('hits');
-    
-    
+
+
     $html .= '</div>';
-    
+
     // return search head
     return $html;
   }
-  
-  
+
 }

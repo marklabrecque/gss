@@ -12,6 +12,7 @@
  * - $url: URL of the result.
  * - $title: Title of the result.
  * - $snippet: A small preview of the result. Does not apply to user searches.
+ * - $thumbnail_url: The url of the image thumbnail
  * - $info: String of all the meta information ready for print. Does not apply
  *   to user searches.
  * - $info_split: Contains same data as $info, split into a keyed array.
@@ -61,12 +62,15 @@
  * @see template_preprocess_search_result()
  * @see template_process()
  */
-?>
+ ?>
 <li class="<?php print $classes; ?>"<?php print $attributes; ?>>
   <?php print render($title_prefix); ?>
   <h3 class="gss-title"<?php print $title_attributes; ?>>
     <a href="<?php print $url; ?>"><?php print $title; ?></a>
   </h3>
+  <?php if ($thumbnail_url): ?>
+    <img class="gss-thumbnail-image" src="<?php print $thumbnail_url; ?>" height="62"/>
+  <?php endif; ?>
   <?php print render($title_suffix); ?>
   <div class="gss-search-snippet-info">
     <?php if ($snippet) : ?>
