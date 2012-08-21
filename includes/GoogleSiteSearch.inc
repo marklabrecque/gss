@@ -340,11 +340,8 @@ class GoogleSiteSearch {
     $show_end = ($pageSize * $currentPage);
 
     $html = '<div class="searchhead">';
-
     
-    
-    
-    if (variable_get('gss_labels', TRUE) == 1) {print "test";
+    if (variable_get('gss_labels', TRUE) == 1) {
       // adding the tabs for the search labels
       $html .= '<span>' . t("Show only results of type:") . '</span><ul>';
 
