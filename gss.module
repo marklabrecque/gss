@@ -103,7 +103,7 @@ function gss_settings() {
   $form['gss']['miscellaneous']['gss_pager_size'] = array(
     '#title' => t('Pager size'),
     '#type' => 'textfield',
-    '#description' => t('Number of pages to show in the pager. Imput ONLY odd numbers like 5, 7 or 9 and NOT 6, 7 or 9, for example.'),
+    '#description' => t('Number of pages to show in the pager. Input ONLY odd numbers like 5, 7 or 9 and NOT 6, 8 or 10, for example.'),
     '#default_value' => variable_get('gss_pager_size', 19),
     '#size' => 5,
     '#max_length' => 5,
