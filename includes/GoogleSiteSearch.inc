@@ -363,6 +363,10 @@ class GoogleSiteSearch {
     $show_start = ($pageSize * $currentPage) - $pageSize + 1;
     $show_end = ($pageSize * $currentPage);
 
+    if($show_end > $totalResults) {
+      $show_end = $totalResults;
+    }
+
     $html = '<div class="searchhead">';
     
     if (variable_get('gss_labels', TRUE) == 1) {
@@ -399,9 +403,10 @@ class GoogleSiteSearch {
       $html .= '</ul>';
     }
 
-    $html .= t('Shows') . ' ' . $show_start . ' ' . t('to') . ' ' . $show_end . ' ' . t('of') . ' ';
-    $html .= t('approximately') . ' ' . $totalResults . ' ' . t('hits');
-
+    if($totalResults !== 0) {
+      $html .= t('Shows') . ' ' . $show_start . ' ' . t('to') . ' ' . $show_end . ' ' . t('of') . ' ';
+      $html .= t('approximately') . ' ' . $totalResults . ' ' . t('hits');
+    }
 
     $html .= '</div>';
 
