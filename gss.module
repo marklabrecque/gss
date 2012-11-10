@@ -197,6 +197,13 @@ function gss_form_search_form_alter(&$form, &$form_state, $form_id) {
   $form['#attributes']['class'][] = 'gss';
 }
 /**
+ * Adds custom submit handler for search block form.
+ */
+function gss_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+  $form['#submit'][] = 'gss_search_form_submit';
+  $form['#attributes']['class'][] = 'gss';
+}
+/**
  * Implements hook_search_execute().
  */
 function gss_search_execute($keys = NULL, $conditions = NULL) {
@@ -232,7 +239,8 @@ function gss_search_form_submit($form, &$form_state) {
   $check = _gss_check();
   if ($check) {
     $form_id = $form_state['values']['form_id'];
-    $keys = $form_state['values']['processed_keys'];
+    // Get the search keys, either from search_form or from search_block_form
+    $keys = (isset($form_state['values']['search_block_form'])) ? $form_state['values']['search_block_form'] : $form_state['values']['processed_keys'];    
     $form_state['redirect'] = array('search/gss/' . $keys);
   }
 }
