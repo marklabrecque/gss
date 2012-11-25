@@ -217,7 +217,7 @@ class GoogleSiteSearch {
 
     // assemble url
     $url = "http://www.google.com/search?start={$startPos}&num={$this->pageSize}{$language}&client=google-csbe&output=xml_no_dtd&cx={$this->key}&q={$this->query}{$extraParamsQuery}";
-
+    
     // fetch results from google
     $results = simplexml_load_file($url);
 
@@ -413,5 +413,9 @@ class GoogleSiteSearch {
     // return search head
     return $html;
   }
+  
+  
+  
+  
 
 }

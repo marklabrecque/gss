@@ -125,7 +125,7 @@ function gss_search_results($query) {
   // Include dependencies.
   module_load_include('inc', 'gss', 'includes/GoogleSiteSearch');
   // Make query safe.
-  $query = check_plain($query);
+  $query = htmlspecialchars($query, ENT_NOQUOTES, 'UTF-8');
   // Init GoogleSiteSearch object.
   $gss = new GoogleSiteSearch($query, variable_get('gss_api_key', ''));
   // Get current page.
@@ -192,16 +192,15 @@ function gss_search_results($query) {
 /**
  * Adds custom submit handler for search form.
  */
-function gss_form_search_form_alter(&$form, &$form_state, $form_id) {
-  $form['#submit'][] = 'gss_search_form_submit';
-  $form['#attributes']['class'][] = 'gss';
-}
-/**
- * Adds custom submit handler for search block form.
- */
-function gss_form_search_block_form_alter(&$form, &$form_state, $form_id) {
-  $form['#submit'][] = 'gss_search_form_submit';
-  $form['#attributes']['class'][] = 'gss';
+function gss_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'search_form':
+    case 'search_block_form':
+    case 'search_theme_form':
+      $form['#submit'][] = 'gss_search_form_submit';
+      $form['#attributes']['class'] = 'gss';
+      break;
+  }
 }
 /**
  * Implements hook_search_execute().
