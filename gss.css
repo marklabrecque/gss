@@ -23,13 +23,22 @@ div.item-list ul.pager {
 .google-search-results .gss-result .gss-title {
   font-weight: normal;
 }
+.google-search-results .gss-result .gss-search-snippet-info .gss-search-url,
+.google-search-results .gss-result .gss-search-snippet-info .gss-info {
+  margin: 0;
+}
+.google-search-results .gss-result .gss-search-snippet-info .gss-search-snippet {
+  margin: 10px 0;
+}
 .google-search-results .gss-result .gss-search-snippet-info .gss-search-url {
-  font-style: italic; 
+  font-style: italic;
 }
 div.item-list ul.pager li {
   margin-left: 0;
   padding: 4px 10px 4px 10px;
 }
+
+
 
 
 

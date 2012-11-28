@@ -4,7 +4,7 @@
  * @file search-results.tpl.php
  * Default theme implementation for displaying search results.
  *
- * This template collects each invocation of theme_search_result(). This and
+ * This template collects each invocation of theme_gss_result(). This and
  * the child template are dependant to one another sharing the markup for
  * definition lists.
  *
@@ -14,10 +14,8 @@
  * Available variables:
  * - $search_results: All results as it is rendered through
  *   search-result.tpl.php
- * - $type: The type of search, e.g., "node" or "user".
  *
- *
- * @see template_preprocess_search_results()
+ * @see template_preprocess_gss_results()
  */
 ?>
 <span><?php print $head; ?></span>
