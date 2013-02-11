@@ -208,29 +208,28 @@ class GoogleSiteSearch {
     else {
       $language = NULL;
     }
-
+    $params = array(
+      'query' => array(
+        'start' => $startPos,
+        'num' => $this->pageSize,
+        $language,
+        'client' => 'google-csbe',
+        'output' => 'xml_no_dtd',
+        'cx' => $this->key,
+        'q' => $this->query,
+       )
+     );
     // prepare query parameters for URL assembly
     if (count($this->extraParams) > 0) {
-      $extraParamsQuery = '&' . http_build_query($this->extraParams);
+      $params['query']  = array_merge($params['query'], $this->extraParams);
     }
     else {
       $extraParamsQuery = NULL;
     }
 
     // fetch results from google
-    $url_response = drupal_http_request(url(GSS_BASE_URL,
-      array('query' => array(
-            'start' => $startPos,
-            'num' => $this->pageSize,
-            $language,
-            'client' => 'google-csbe',
-            'output' => 'xml_no_dtd',
-            'cx' => $this->key,
-            'q' => $this->query,
-            $extraParamsQuery,
-          )
-      )));
-    
+    $url_response = drupal_http_request(url(GSS_BASE_URL, $params));
+
     if (isset($url_response->error)) {
       return NULL;
     }
