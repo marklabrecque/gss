@@ -29,7 +29,7 @@ Legal information about Drupal:
 ---------------------------------------
 
 Google Site Search uses the Google API to search one or more sites.
-A Google API key is required to use this module.
+A Search engine unique ID is required to use this module.
 
 The difference in this module, compared to other such as Google CSE,
 is that search results are completely customized and will not appear in an
@@ -44,7 +44,7 @@ This requires "Site Search Edition" (paid version of Google's Custom Search).
   1. Go to Configuration > Search and metadata > Search settings
   2. Go to the Google Site Search group (this group shows only if the module
      is active).
-  3. Put your Google API key in the "API Key" field. Note that the key
+  3. Put your unique ID in the "Search engine unique ID" field. Note that the ID
      must to be "Site Search Edition" (paid version of Google's Custom Search).
 
 - Search settings

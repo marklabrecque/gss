@@ -269,7 +269,7 @@ function _gss_check() {
   $gss_api_key = variable_get('gss_api_key', FALSE);
   if (!$gss_api_key) {
     $search_active_modules = variable_get('search_active_modules', array('node', 'user'));
-    // Disable Google Site Search if no Google API key is given
+    // Disable Google Site Search if no Search engine unique ID is given
     unset($search_active_modules['gss']);
     variable_set('search_active_modules', $search_active_modules);
     return FALSE;
