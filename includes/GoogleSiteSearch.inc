@@ -398,7 +398,7 @@ class GoogleSiteSearch {
         $term_from_query = end(explode(":", $this->query));  //in this case we store the category to check later
       }
 
-      $this->query = current(explode(" more:", $this->query)); //resume $this->query to its original value (no categories)
+      $this->query = current(explode("+more:", $this->query)); //resume $this->query to its original value (no categories)
       // first item will always be the original query
       $html .= '<li>' . '<a ' . $active_html_first_element . ' href=' . urlencode($this->query) . '>' . t('All results') . '</a>' . '</li>';
 
