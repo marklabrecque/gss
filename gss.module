@@ -277,3 +277,12 @@ function _gss_check() {
   return TRUE;
 }
 
+/**
+ * Implements hook_init().
+ */
+function gss_init() {
+  $settings['gss']['key'] = variable_get('gss_api_key', '');
+  drupal_add_js($settings, 'setting');
+  drupal_add_library('system', 'ui.autocomplete');
+}
+

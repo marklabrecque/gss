@@ -5,3 +5,5 @@ core = 7.x
 dependencies[] = search
 files[] = gss.module
 files[] = gss.theme.inc
+scripts[] = scripts/autocomplete.js
+
