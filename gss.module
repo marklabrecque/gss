@@ -178,8 +178,8 @@ function gss_search_results($query) {
         'link' => urldecode($result['url']),
         'title' => $result['title'],
         'thumbnail_url' => $result['thumbnail_url'],
-      	'snippet' => $result['description'],
-        );
+        'snippet' => $result['description'],
+      );
     }
   }
   else {
