@@ -205,7 +205,7 @@ function gss_form_alter(&$form, &$form_state, $form_id) {
     case 'search_block_form':
     case 'search_theme_form':
       $form['#submit'][] = 'gss_search_form_submit';
-      $form['#attributes']['class'] = 'gss';
+      $form['#attributes']['class'][] = 'gss';
       break;
   }
 }
