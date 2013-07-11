@@ -29,20 +29,21 @@ function template_preprocess_gss_result(&$variables) {
   $url = parse_url($result['link']);
   // Get the Drupal system path for the URL alias
   $system_path = drupal_lookup_path('source', substr($url['path'], 1));
-  preg_match('/node\/(\d+)/', $system_path, $matches);
-  $nid = isset($matches[1]) ? (int)$matches[1] : 0;
-  if ($nid) {
-    $node = node_load($nid);
-    $user = user_load($node->uid);
-    $user_name = l($user->name, 'user/' . $user->uid);
-    $info = array(
-      'type' => $node->type,
-      'user' => $user_name,
-      'date' => format_date($node->created, 'short'),
-    );
-    $variables['info_split'] = $info;
-    $variables['info'] = implode(' | ', $info);
-    $variables['show_info'] = variable_get('gss_info', FALSE);
+  if ($system_path) {
+    preg_match_all('/node\/(\d)/', $system_path, $matches, PREG_SET_ORDER);
+    $nid = isset($matches[0][1]) ? (int)$matches[0][1] : 0;
+    if ($nid && $node = node_load($nid)) {
+      $user = user_load($node->uid);
+      $user_name = l($user->name, 'user/' . $user->uid);
+      $info = array(
+        'type' => $node->type,
+        'user' => $user_name,
+        'date' => format_date($node->created, 'short'),
+      );
+      $variables['info_split'] = $info;
+      $variables['info'] = implode(' | ', $info);
+      $variables['show_info'] = variable_get('gss_info', FALSE);
+    }
   }
 }
 
