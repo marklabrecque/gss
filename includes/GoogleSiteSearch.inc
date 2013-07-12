@@ -69,6 +69,11 @@ class GoogleSiteSearch {
    */
   private $allowedTags = array('a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'b');
 
+  /**
+   * The search categories
+   * @var array
+   */
+  private $categories = array();
 
   /**
    * Create a new instance of GoogleSiteSearch.
@@ -262,14 +267,16 @@ class GoogleSiteSearch {
 
         // store faceted items in order to use them later in the header
         $categories = array();
-        foreach ($results->Context->Facet as $facet) {
-          $categories[] = array(
-            'label' => check_plain((string) $facet->FacetItem->label),
-            'anchor_text' => check_plain((string) $facet->FacetItem->anchor_text),
-          );
+        if (isset($results->Context->Facet->FacetItem)) {
+          foreach ($results->Context->Facet->FacetItem as $facet) {
+            $categories[] = array(
+              'label' => check_plain((string) $facet->label),
+              'anchor_text' => check_plain((string) $facet->anchor_text),
+            );
+          }
+          $this->categories = $categories;
         }
-        $this->categories = $categories;
-
+        
         // init results array
         $arr = array();
 
