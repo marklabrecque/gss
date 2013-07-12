@@ -223,23 +223,22 @@ class GoogleSiteSearch {
     // calculate start postition based on page
     $startPos = ($this->currentPage - 1) * $this->pageSize;
 
-    if ($this->language) {
-      $language = "&lr=lang_{$this->language}";
-    }
-    else {
-      $language = NULL;
-    }
     $params = array(
       'query' => array(
         'start' => $startPos,
         'num' => $this->pageSize,
-        $language,
         'client' => 'google-csbe',
         'output' => 'xml_no_dtd',
         'cx' => $this->key,
         'q' => $this->query,
-       )
-     );
+      )
+    );
+    
+    // Add language parameter if is set.
+    if ($this->language) {
+      $params['lr'] = 'lang_'.$this->language;
+    }
+     
     // prepare query parameters for URL assembly
     if (count($this->extraParams) > 0) {
       $params['query']  = array_merge($params['query'], $this->extraParams);
