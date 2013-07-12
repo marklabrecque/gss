@@ -114,6 +114,12 @@ function gss_settings() {
     '#description' => t('Let the user filter the search result by labels. <a href="@link">Click here</a> to read more about search labels.', array('@link' => url('https://developers.google.com/custom-search/docs/ref_prebuiltlabels'))),
     '#default_value' => variable_get('gss_labels', TRUE),
   );
+  $form['gss']['miscellaneous']['gss_number_of_results'] = array(
+    '#title' => t('Show number of results'),
+    '#type' => 'checkbox',
+    '#description' => t('Show the line "Shows x to y of approximately x hits" in the top of the search result.'),
+    '#default_value' => variable_get('gss_number_of_results', TRUE),
+  );
   $form['gss']['miscellaneous']['gss_info'] = array(
     '#title' => t('Show extra information for each search result'),
     '#type' => 'checkbox',
