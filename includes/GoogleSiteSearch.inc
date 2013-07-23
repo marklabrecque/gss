@@ -236,7 +236,7 @@ class GoogleSiteSearch {
     
     // Add language parameter if is set.
     if ($this->language) {
-      $params['lr'] = 'lang_'.$this->language;
+      $params['query']['hl'] = $this->language;
     }
      
     // prepare query parameters for URL assembly
