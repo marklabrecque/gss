@@ -60,11 +60,11 @@
     <?php if ($url) : ?>
       <p class="gss-search-url"><a href="<?php print $url; ?>"><?php print $url; ?></a></p>
     <?php endif; ?>
-    <?php if ($show_info): ?>
+    <?php if ($info): ?>
       <p class="gss-info">
         <?php print $info; ?>
       </p>
     <?php endif; ?>
   </div>
-    
+
 </li>

@@ -323,7 +323,7 @@ class GoogleSiteSearch {
    */
   public function GetPager($link = '?page=') {
 
-    // get total pages  
+    // get total pages
     $totalPages = $this->GetTotalPages();
     $currentPage = $this->GetCurrentPage();
     $pagerSize = $this->GetPagerSize();
@@ -392,7 +392,7 @@ class GoogleSiteSearch {
    * @return string The search head HTML code.
    */
   public function GetSearchHead() {
-    // get total pages  
+    // get total pages
     $totalResults = $this->GetTotalResults();
     $pageSize = $this->GetPageSize();
     $currentPage = $this->GetCurrentPage();
@@ -404,7 +404,7 @@ class GoogleSiteSearch {
     }
 
     $html = '<div class="searchhead">';
-    
+
     if (variable_get('gss_labels', TRUE) == 1) {
       // adding the tabs for the search labels
       $html .= '<span>' . t("Show only results of type:") . '</span><ul>';
@@ -417,10 +417,11 @@ class GoogleSiteSearch {
         $term_from_query = "";
       }
       else {
-        $term_from_query = end(explode(":", $this->query));  //in this case we store the category to check later
+        $query_parts = explode(":", $this->query);
+        $term_from_query = end($query_parts);  //in this case we store the category to check later
       }
 
-      $this->query = current(explode("+more:", $this->query)); //resume $this->query to its original value (no categories)
+      $this->query = current(explode(" more:", $this->query)); //resume $this->query to its original value (no categories)
       // first item will always be the original query
       $html .= '<li>' . '<a ' . $active_html_first_element . ' href=' . urlencode($this->query) . '>' . t('All results') . '</a>' . '</li>';
 
@@ -448,9 +449,9 @@ class GoogleSiteSearch {
     // return search head
     return $html;
   }
-  
-  
-  
-  
+
+
+
+
 
 }
