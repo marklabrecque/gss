@@ -137,6 +137,8 @@ function gss_search_results($query) {
   drupal_add_css(drupal_get_path('module', 'gss') . '/gss.css');
   // Include dependencies.
   module_load_include('inc', 'gss', 'includes/GoogleSiteSearch');
+  // Let other modules alter the $query variable
+  drupal_alter('gss_search_key', $query);
   // Make query safe.
   $query = htmlspecialchars($query, ENT_NOQUOTES, 'UTF-8');
   // Init GoogleSiteSearch object.
