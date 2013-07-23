@@ -56,6 +56,12 @@ function gss_settings() {
     '#description' => t('Your Search engine unique ID. If no ID is given, the module will not work and will be disabled.'),
     '#default_value' => variable_get('gss_api_key', ''),
   );
+  $form['gss']['main']['gss_base_url'] = array(
+    '#title' => t('Search engine base url'),
+    '#type' => 'textfield',
+    '#description' => t('The base URL to send the query to. Use this to override the default request to google, useful for proxying the request.'),
+    '#default_value' => variable_get('gss_base_url', ''),
+  );
   $form['gss']['language'] = array(
     '#type' => 'fieldset',
     '#title' => t('Language'),

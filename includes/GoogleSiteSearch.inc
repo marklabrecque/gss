@@ -247,8 +247,12 @@ class GoogleSiteSearch {
       $extraParamsQuery = NULL;
     }
 
+    // get the search base set in the admin, default to google
+    $search_base_url = variable_get('gss_base_url', '');
+    $search_base_url = !empty($search_base_url) ? $search_base_url : GSS_BASE_URL;
+
     // fetch results from google
-    $url_response = drupal_http_request(url(GSS_BASE_URL, $params));
+    $url_response = drupal_http_request(url($search_base_url, $params));
 
     if (isset($url_response->error)) {
       return NULL;
