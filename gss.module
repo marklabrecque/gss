@@ -145,10 +145,13 @@ function gss_search_results($query) {
   module_load_include('inc', 'gss', 'includes/GoogleSiteSearch');
   // Let other modules alter the $query variable
   drupal_alter('gss_search_key', $query);
+  // Let other modules add extra parameters.
+  $extra = NULL;
+  drupal_alter('gss_search_extraparams', $extra);
   // Make query safe.
   $query = htmlspecialchars($query, ENT_NOQUOTES, 'UTF-8');
   // Init GoogleSiteSearch object.
-  $gss = new GoogleSiteSearch($query, variable_get('gss_api_key', ''));
+  $gss = new GoogleSiteSearch($query, variable_get('gss_api_key', ''), 20, $extra);
   // Get current page.
   $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
   // Init results variable.
