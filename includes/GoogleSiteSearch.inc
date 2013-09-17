@@ -437,7 +437,7 @@ class GoogleSiteSearch {
             $active_html_others = 'class="active"';
           }
           $new_query = urlencode($this->query) . '+more%3A' . $categ['label']; //builds up the path to the tab links
-          $html .= '<li>' . '<a ' . $active_html_others . ' href=' . $new_query . '>' . $categ['anchor_text'] . '</a>' . '</li>';
+          $html .= '<li>' . '<a ' . $active_html_others . ' href=' . $new_query . '>' . t($categ['anchor_text'], array(), array('context' => 'gss:search-result:filter')) . '</a>' . '</li>';
         }
       }
 
