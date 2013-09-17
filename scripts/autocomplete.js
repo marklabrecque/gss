@@ -5,7 +5,7 @@
         return;
       }
 
-      $('.block-search .form-item-search-block-form input.form-text, .gss .form-item-keys input.form-text')
+      $('.block-search .form-item-search-block-form input.form-text, .gss .form-item-keys input.form-text, .block-search .form-search input.form-text')
         .focus(function () {
           this.select();
         })
