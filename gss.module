@@ -24,8 +24,8 @@ function gss_search_admin() {
   return gss_settings();
 }
 /**
-* Module settings.
-*/
+ * Module settings.
+ */
 function gss_settings() {
   $form = array();
 
@@ -142,7 +142,7 @@ function gss_search_results($query) {
   drupal_add_css(drupal_get_path('module', 'gss') . '/gss.css');
   // Include dependencies.
   module_load_include('inc', 'gss', 'includes/GoogleSiteSearch');
-  // Let other modules alter the $query variable
+  // Let other modules alter the $query variable.
   drupal_alter('gss_search_key', $query);
   // Let other modules add extra parameters.
   $extra = NULL;
@@ -154,17 +154,17 @@ function gss_search_results($query) {
   // Get current page.
   $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
   // Init results variable.
-  $results = null;
+  $results = NULL;
   // Set the number of results per page.
   $gss->SetPageSize(variable_get('gss_page_size', 20));
   // Set the number of pages to show in the pager.
   $gss->SetPagerSize(variable_get('gss_pager_size', 20));
-  // Set the search language
+  // Set the search language.
   $default_lang = variable_get('gss_default_language', FALSE);
   if ($default_lang) {
     $gss->SetLanguage($language->language);
   }
-  else  {
+  else {
     $gss->SetLanguage(variable_get('gss_language', ''));
   }
   // Perform search.
@@ -172,9 +172,9 @@ function gss_search_results($query) {
     $results = $gss->GetSearchResults($page);
   }
   catch(Exception $e) {
-     watchdog('gss', $e, NULL, WATCHDOG_ERROR);
-     drupal_set_message(t('Sorry, the search function is unavailable at this time.'));
-     exit();
+    watchdog('gss', $e, NULL, WATCHDOG_ERROR);
+    drupal_set_message(t('Sorry, the search function is unavailable at this time.'));
+    drupal_exit();
   }
   // Get search summary.
   $total_results = $gss->GetTotalResults();
@@ -189,7 +189,8 @@ function gss_search_results($query) {
     $output = array();
     // Loop results.
     foreach ($results as $result) {
-  	  $result['thumbnail_url'] = isset($result['thumbnail_url']) ? $result['thumbnail_url'] : ''; //just to avoid warnings in the log if not set
+      // Just to avoid warnings in the log if not set.
+      $result['thumbnail_url'] = isset($result['thumbnail_url']) ? $result['thumbnail_url'] : '';
       $output[] = array(
         'link' => urldecode($result['url']),
         'title' => $result['title'],
@@ -200,14 +201,14 @@ function gss_search_results($query) {
   }
   else {
     $output[] = array(
-        'link' => '',
-        'title' => '',
-        'snippet' => t('No results'),
-        );
+      'link' => '',
+      'title' => '',
+      'snippet' => t('No results'),
+    );
   }
-  // Get searrch head
+  // Get searrch head.
   $output['head'] = $gss->GetSearchHead();
-  // Get pager
+  // Get pager.
   $output['pager'] = $gss->GetPager();
 
   return $output;
@@ -255,8 +256,8 @@ function gss_results_tab() {
   return ($var = variable_get('gss_results_tab', '')) ? $var : t('Google Search');
 }
 /**
-* Submit handler.
-*/
+ * Submit handler.
+ */
 function gss_search_form_submit($form, &$form_state) {
   $check = _gss_check();
   if ($check) {
@@ -267,7 +268,7 @@ function gss_search_form_submit($form, &$form_state) {
   }
 }
 /**
- * Implementation of hook_search_page().
+ * Implements hook_search_page().
  */
 function gss_search_page($results) {
   $output['#theme'] = 'gss_results';
@@ -285,7 +286,7 @@ function _gss_check() {
   $gss_api_key = variable_get('gss_api_key', FALSE);
   if (!$gss_api_key) {
     $search_active_modules = variable_get('search_active_modules', array('node', 'user'));
-    // Disable Google Site Search if no Search engine unique ID is given
+    // Disable Google Site Search if no Search engine unique ID is given.
     unset($search_active_modules['gss']);
     variable_set('search_active_modules', $search_active_modules);
     return FALSE;
@@ -301,4 +302,3 @@ function gss_init() {
   drupal_add_js($settings, 'setting');
   drupal_add_library('system', 'ui.autocomplete');
 }
-

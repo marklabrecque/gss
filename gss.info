@@ -6,4 +6,3 @@ dependencies[] = search
 files[] = gss.module
 files[] = gss.theme.inc
 scripts[] = scripts/autocomplete.js
-
