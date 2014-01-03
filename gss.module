@@ -28,14 +28,14 @@ function gss_search_admin() {
 */
 function gss_settings() {
   $form = array();
-  
+
   $form['gss'] = array(
     '#title' => t('Google Site Search'),
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
-  
+
   $form['gss']['main'] = array(
     '#type' => 'fieldset',
     '#title' => t('Main'),
@@ -131,7 +131,7 @@ function gss_settings() {
     '#description' => t('Show extra information (content-type, author and date) below each search result.'),
     '#default_value' => variable_get('gss_info', FALSE),
   );
-  
+
   return $form;
 }
 /**
@@ -180,7 +180,7 @@ function gss_search_results($query) {
   $total_results = $gss->GetTotalResults();
   $end_pos = $gss->GetCurrentPage() * $gss->GetPageSize();
   $start_pos = $end_pos - $gss->GetPageSize() + 1;
-  
+
   if ($end_pos > $total_results) {
     $end_pos = $total_results;
   }
@@ -209,7 +209,7 @@ function gss_search_results($query) {
   $output['head'] = $gss->GetSearchHead();
   // Get pager
   $output['pager'] = $gss->GetPager();
-  
+
   return $output;
 }
 /**
@@ -229,7 +229,7 @@ function gss_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_search_execute().
  */
 function gss_search_execute($keys = NULL, $conditions = NULL) {
-  return gss_search_results($keys);  
+  return gss_search_results($keys);
 }
 /**
  * Implements hook_search_info().
@@ -262,7 +262,7 @@ function gss_search_form_submit($form, &$form_state) {
   if ($check) {
     $form_id = $form_state['values']['form_id'];
     // Get the search keys, either from search_form or from search_block_form
-    $keys = (isset($form_state['values']['search_block_form'])) ? $form_state['values']['search_block_form'] : $form_state['values']['processed_keys'];    
+    $keys = (isset($form_state['values']['search_block_form'])) ? $form_state['values']['search_block_form'] : $form_state['values']['processed_keys'];
     $form_state['redirect'] = array('search/gss/' . $keys);
   }
 }
