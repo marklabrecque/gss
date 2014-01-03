@@ -1,7 +1,5 @@
 <?php
 
-// $Id$
-
 // Defines the Google site search base url.
 define('GSS_BASE_URL', 'http://www.google.com/search');
 /**
