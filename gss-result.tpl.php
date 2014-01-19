@@ -60,7 +60,7 @@
     <?php if ($url) : ?>
       <p class="gss-search-url"><a href="<?php print $url; ?>"><?php print $url; ?></a></p>
     <?php endif; ?>
-    <?php if ($info): ?>
+    <?php if ($show_info && $info): ?>
       <p class="gss-info">
         <?php print $info; ?>
       </p>
