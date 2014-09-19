@@ -295,9 +295,9 @@ function _gss_check() {
 }
 
 /**
- * Implements hook_init().
+ * Implements hook_page_build().
  */
-function gss_init() {
+function gss_page_build(&$page) {
   $settings['gss']['key'] = variable_get('gss_api_key', '');
   drupal_add_js($settings, 'setting');
   drupal_add_library('system', 'ui.autocomplete');
