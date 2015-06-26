@@ -55,6 +55,12 @@ function gss_settings() {
     '#description' => t('Your Search engine unique ID. If no ID is given, the module will not work and will be disabled.'),
     '#default_value' => variable_get('gss_api_key', ''),
   );
+  $form['gss']['main']['gss_autocomplete'] = array(
+    '#title' => t('Add Google autocomplete to search boxes'),
+    '#type' => 'checkbox',
+    '#description' => t('Add Google autocomplete to search boxes.'),
+    '#default_value' => variable_get('gss_autocomplete', FALSE),
+  );
   $form['gss']['main']['gss_base_url'] = array(
     '#title' => t('Search engine base url'),
     '#type' => 'textfield',
@@ -298,7 +304,11 @@ function _gss_check() {
  * Implements hook_page_build().
  */
 function gss_page_build(&$page) {
-  $settings['gss']['key'] = variable_get('gss_api_key', '');
-  drupal_add_js($settings, 'setting');
-  drupal_add_library('system', 'ui.autocomplete');
+  $autocomplete = variable_get('gss_autocomplete', FALSE);
+  if ($autocomplete) {
+    $settings['gss']['key'] = variable_get('gss_api_key', '');
+    drupal_add_js($settings, 'setting');
+    drupal_add_library('system', 'ui.autocomplete');
+    drupal_add_js(drupal_get_path('module', 'gss') . '/scripts/autocomplete.js');
+  }
 }

@@ -10,6 +10,7 @@
  */
 function gss_uninstall() {
   variable_del('gss_api_key');
+  variable_del('gss_autocomplete');
   variable_del('gss_base_url');
   variable_del('gss_default_language');
   variable_del('gss_global');
