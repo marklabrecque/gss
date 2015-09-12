@@ -6,9 +6,7 @@
 .google-search-results,
 .google-search-results .gss-result,
 .google-search-results .gss-result .gss-title,
-.google-search-results .gss-result .gss-search-snippet-info p,
-div.item-list,
-div.item-list ul.pager {
+.google-search-results .gss-result .gss-search-snippet-info p {
   margin: 0;
 }
 .google-search-results {
@@ -31,8 +29,4 @@ div.item-list ul.pager {
 }
 .google-search-results .gss-result .gss-search-snippet-info .gss-search-url {
   font-style: italic;
-}
-div.item-list ul.pager li {
-  margin-left: 0;
-  padding: 4px 10px 4px 10px;
 }

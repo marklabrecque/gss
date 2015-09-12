@@ -323,69 +323,17 @@ class GoogleSiteSearch {
    *
    * @return string The pager HTML code.
    */
-  public function GetPager($link = '?page=') {
+  public function GetPager() {
+    // Initializing the pager.
+    pager_default_initialize($this->getTotalResults(), $this->getPageSize());
 
-    // get total pages
-    $totalPages = $this->GetTotalPages();
-    $currentPage = $this->GetCurrentPage();
-    $pagerSize = $this->GetPagerSize();
-    $halfPagerSize = $pagerSize / 2;
-
-    if ($totalPages < 2) {
-      return;
-    }
-
-    $html = "<div class=\"item-list google-search-pager\"><ul class=\"pager\">\n";
-
-    // Limit the number of pages to 50
-    $totalPages = $totalPages > 50 ? 50 : $totalPages;
-
-    if ($currentPage > 1) {
-      $link_page = $link . ($currentPage - 1);
-      $html .= "\t<li class=\"pager-previous\"><a href=\"{$link_page}\">" . t('‹ previous') . "</a></li>\n";
-    }
-
-    // Defines the start and finish of the pager
-    $pagerStart = $currentPage - (round($pagerSize / 2) - 1);
-    $pagerFinish = $currentPage + (round($pagerSize / 2) - 1);
-
-    // Start values, if $pagerStart is negative
-    if ($pagerStart < 1) {
-      $pagerStart = 1;
-      $pagerFinish = $pagerSize > $totalPages ? $totalPages : $pagerSize;
-    }
-
-    // Limit $pagerFinish to the same as $totalPages
-    $pagerFinish = $pagerFinish > $totalPages ? $totalPages : $pagerFinish;
-
-    if ($pagerStart > 1) {
-      $html .= "\t<li class=\"pager-ellipsis\">...</li>\n";
-    }
-
-    for ($i = $pagerStart; $i <= $pagerFinish; $i++) {
-      if ($i != $currentPage) {
-        $link_page = $link . $i;
-        $html .= "\t<li class=\"pager-item\"><a href=\"{$link_page}\">{$i}</a></li>\n";
-      }
-      else {
-        $html .= "\t<li class=\"pager-current\">{$i}</li>\n";
-      }
-    }
-
-    if ($pagerFinish < $totalPages) {
-      $html .= "\t<li class=\"pager-ellipsis\">...</li>\n";
-    }
-
-    if ($currentPage < intval($totalPages)) {
-      $link_page = $link . ($currentPage + 1);
-      $html .= "\t<li class=\"pager-next\"><a href=\"{$link_page}\">" . t('next ›') . "</a></li>\n";
-    }
-
-    // close ol
-    $html .= "</ul></div>\n";
-
-    // return pager
-    return $html;
+    // Return pager.
+    return array(
+      '#theme' => 'pager',
+      '#variables' => array(
+        'quantity' => $this->getTotalResults()
+      )
+    );
   }
 
   /**
