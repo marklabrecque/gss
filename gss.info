@@ -3,5 +3,3 @@ description = Provides integration with Google Site Search.
 core = 7.x
 
 dependencies[] = search
-files[] = gss.module
-files[] = gss.theme.inc
