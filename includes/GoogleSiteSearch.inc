@@ -284,7 +284,10 @@ class GoogleSiteSearch {
 
     // Add language parameter if is set.
     if ($this->language) {
+      // hl: "interface language", also used to weight results
       $params['query']['hl'] = $this->language;
+      // lr: "language restrict", supposed to limit results to only the set language, defined with a "lang_" prefix
+      $params['query']['lr'] = 'lang_'. $this->language;
     }
 
     // Prepare query parameters for URL assembly.
