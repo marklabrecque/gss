@@ -362,7 +362,7 @@ function gss_search_results($query) {
     );
   }
 
-  // Get searrch head.
+  // Get search head.
   $output['head'] = $gss->getSearchHead();
 
   // Get pager.
