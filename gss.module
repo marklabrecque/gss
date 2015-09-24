@@ -366,7 +366,8 @@ function gss_search_results($query) {
   $output['head'] = $gss->getSearchHead();
 
   // Get pager.
-  $output['pager'] = drupal_render($gss->getPager());
+  $pager = $gss->getPager();
+  $output['pager'] = drupal_render($pager);
 
   return $output;
 }
