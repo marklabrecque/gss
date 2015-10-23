@@ -69,6 +69,13 @@ class GoogleSiteSearch {
   private $totalResults = 0;
 
   /**
+   * Total results approximation for a search.
+   *
+   * @var int
+   */
+  private $approxTotalResults = 0;
+
+  /**
    * The search results return from Google.
    *
    * @var SimpleXml
@@ -213,6 +220,16 @@ class GoogleSiteSearch {
   }
 
   /**
+   * Get approximate total results for current search.
+   *
+   * @return int
+   *   The total number of results.
+   */
+  public function getApproxTotalResults() {
+    return $this->approxTotalResults;
+  }
+
+  /**
    * Get total number of pages for search.
    *
    * @return int
@@ -317,7 +334,8 @@ class GoogleSiteSearch {
       }
       else {
         // Save total results.
-        $this->totalResults = intval(check_plain((string) $results->RES->M));
+        $this->approxTotalResults = intval(check_plain((string) $results->RES->M));
+        $this->totalResults = intval($results->Context->total_results);
 
         // Store faceted items in order to use them later in the header.
         $categories = array();
@@ -461,7 +479,7 @@ class GoogleSiteSearch {
       $html .= t('Shows @show_start to @show_end of approximately @total_results hits', array(
         '@show_start' => $show_start,
         '@show_end' => $show_end,
-        '@total_results' => $total_results
+        '@total_results' => $this->approxTotalResults,
       ));
     }
 
