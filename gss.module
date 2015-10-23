@@ -299,7 +299,7 @@ function gss_search_results($query) {
   $gss = new GoogleSiteSearch($query, variable_get('gss_api_key', ''), 20, $extra);
 
   // Get current page.
-  $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+  $page = isset($_GET['page']) ? intval($_GET['page']) : 0;
 
   // Init results variable.
   $results = NULL;

@@ -281,12 +281,12 @@ class GoogleSiteSearch {
    * @throws Exception
    *   In cases when no results are returned from Google.
    */
-  public function getSearchResults($page = 1) {
+  public function getSearchResults($page = 0) {
     // Set page.
     $this->currentPage = $page;
 
     // Calculate start postition based on page.
-    $start_pos = ($this->currentPage - 1) * $this->pageSize;
+    $start_pos = ($this->currentPage) * $this->pageSize;
 
     $params = array(
       'query' => array(
@@ -421,8 +421,8 @@ class GoogleSiteSearch {
     $total_results = $this->getTotalResults();
     $page_size = $this->getPageSize();
     $current_page = $this->getCurrentPage();
-    $show_start = ($page_size * $current_page) - $page_size + 1;
-    $show_end = ($page_size * $current_page);
+    $show_start = ($page_size * $current_page) + 1;
+    $show_end = ($page_size * $current_page) + $page_size;
 
     if ($show_end > $total_results) {
       $show_end = $total_results;
