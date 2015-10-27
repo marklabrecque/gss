@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Default theme implementation for displaying a single Google search result.
@@ -43,7 +42,7 @@
  *
  * @see template_preprocess_gss_result()
  */
- ?>
+?>
 <li class="<?php print $classes; ?>"<?php print $attributes; ?>>
   <?php print render($title_prefix); ?>
   <h3 class="gss-title"<?php print $title_attributes; ?>>

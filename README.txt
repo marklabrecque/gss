@@ -1,6 +1,3 @@
-For more information about this module please visit:
-http://drupal.org/project/gss
-
 Contents of this file
 ---------------------
 
@@ -53,7 +50,3 @@ This requires "Site Search Edition" (paid version of Google's Custom Search).
   2. In the Active search modules group, enable "Google Site Search".
   3. If you want, you can set the Google Site Search as default in
      "Default search module" in the same page.
-
-
----------------------------------------
-by Dhavyd Vanderlei - http://www.dhavyd.com

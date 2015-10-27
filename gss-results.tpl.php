@@ -1,7 +1,6 @@
 <?php
-
 /**
- * @file search-results.tpl.php
+ * @file
  * Default theme implementation for displaying search results.
  *
  * This template collects each invocation of theme_gss_result(). This and

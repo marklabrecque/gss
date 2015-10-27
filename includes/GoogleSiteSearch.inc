@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * GSS module site search inc file.
  */
 
@@ -100,7 +101,7 @@ class GoogleSiteSearch {
     'dl',
     'dt',
     'dd',
-    'b'
+    'b',
   );
 
   /**
@@ -117,7 +118,7 @@ class GoogleSiteSearch {
    *   The search string.
    * @param string $key
    *   The Google API key.
-   * @param string $page_size
+   * @param int $page_size
    *   The number of results to return per page.
    * @param string $extra_params
    *   Extra parameters to be passed onto Google CSE.
@@ -285,7 +286,7 @@ class GoogleSiteSearch {
     // Set page.
     $this->currentPage = $page;
 
-    // Calculate start postition based on page.
+    // Calculate start position based on page.
     $start_pos = ($this->currentPage) * $this->pageSize;
 
     $params = array(
@@ -296,15 +297,15 @@ class GoogleSiteSearch {
         'output' => 'xml_no_dtd',
         'cx' => $this->key,
         'q' => $this->query,
-      )
+      ),
     );
 
     // Add language parameter if is set.
     if ($this->language) {
-      // hl: "interface language", also used to weight results
+      // hl: "interface language", also used to weight results.
       $params['query']['hl'] = $this->language;
-      // lr: "language restrict", supposed to limit results to only the set language, defined with a "lang_" prefix
-      $params['query']['lr'] = 'lang_'. $this->language;
+      // lr: "language restrict", supposed to limit results to only the set language, defined with a "lang_" prefix.
+      $params['query']['lr'] = 'lang_' . $this->language;
     }
 
     // Prepare query parameters for URL assembly.
@@ -405,8 +406,8 @@ class GoogleSiteSearch {
     return array(
       '#theme' => 'pager',
       '#variables' => array(
-        'quantity' => $this->getTotalResults()
-      )
+        'quantity' => $this->getTotalResults(),
+      ),
     );
   }
 
@@ -432,43 +433,44 @@ class GoogleSiteSearch {
 
     if (variable_get('gss_labels', TRUE) == 1) {
       // Adding the tabs for the search labels.
-      $html .= '<span>' . t("Show only results of type:") . '</span><ul>';
+      $html .= '<span>' . t('Show only results of type:') . '</span><ul>';
 
       // Checking which one is the active tab.
-      $active_html_first_element = "";
-      $active_html_others = "";
+      $active_html_first_element = '';
 
       // There is no faceted search.
-      if (strpos($this->query, "more:") === FALSE) {
+      if (strpos($this->query, 'more:') === FALSE) {
         // Then the first element is active.
         $active_html_first_element = 'class="active"';
-        $term_from_query = "";
+        $term_from_query = '';
       }
       else {
-        $query_parts = explode(":", $this->query);
+        $query_parts = explode(':', $this->query);
 
         // In this case we store the category to check later.
         $term_from_query = end($query_parts);
       }
 
       // Resume $this->query to its original value (no categories).
-      $this->query = current(explode(" more:", $this->query));
+      $this->query = current(explode(' more:', $this->query));
 
       // First item will always be the original query.
       $html .= '<li>' . '<a ' . $active_html_first_element . ' href=' . urlencode($this->query) . '>' . t('All results') . '</a>' . '</li>';
 
       // Loop to create all remaining categorized tabs / queries.
       if ($total_results > 0) {
-        foreach ($this->categories as $categ) {
+        foreach ($this->categories as $category) {
           // Do not inherit from previous loop...
-          $active_html_others = "";
-          if ($categ['label'] == $term_from_query) {
+          $active_html_others = '';
+          if ($category['label'] == $term_from_query) {
             $active_html_others = 'class="active"';
           }
 
           // Builds up the path to the tab links.
-          $new_query = urlencode($this->query) . '+more%3A' . $categ['label'];
-          $html .= '<li>' . '<a ' . $active_html_others . ' href=' . $new_query . '>' . t($categ['anchor_text'], array(), array('context' => 'gss:search-result:filter')) . '</a>' . '</li>';
+          $new_query = urlencode($this->query) . '+more%3A' . $category['label'];
+          $html .= '<li><a ' . $active_html_others . ' href=' . $new_query . '>' .
+            t($category['anchor_text'], array(), array('context' => 'gss:search-result:filter')) .
+          '</a></li>';
         }
       }
 
@@ -488,4 +490,5 @@ class GoogleSiteSearch {
     // Return search head.
     return $html;
   }
+
 }
