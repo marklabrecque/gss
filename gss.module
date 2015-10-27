@@ -83,6 +83,17 @@ function gss_settings() {
     '#description' => t('Enter a custom name of the tab where search results are displayed (defaults to %google).', array('%google' => t('Google Search'))),
     '#default_value' => variable_get('gss_results_tab', ''),
   );
+  $gss_no_results = variable_get('gss_no_results', array(
+    'value' => t('No results'),
+    'format' => NULL,
+  ));
+  $form['gss']['miscellaneous']['gss_no_results'] = array(
+    '#title' => t('No results'),
+    '#type' => 'text_format',
+    '#default_value' => $gss_no_results['value'],
+    '#format' => $gss_no_results['format'],
+    '#description' => t('Message to display when no search results are found. If provided, the "@query" token will be replaced with the search query.'),
+  );
   $form['gss']['miscellaneous']['gss_page_size'] = array(
     '#title' => t('Page size'),
     '#type' => 'textfield',
@@ -355,10 +366,17 @@ function gss_search_results($query) {
     }
   }
   else {
+    $default_no_results = variable_get('gss_no_results', array(
+      'value' => t('No results'),
+      'format' => NULL,
+    ));
+    $empty_results = format_string($default_no_results['value'], array(
+      '@query' => $query,
+    ));
     $output[] = array(
       'link' => '',
       'title' => '',
-      'snippet' => t('No results'),
+      'snippet' => check_markup($empty_results, $default_no_results['format']),
     );
   }
 

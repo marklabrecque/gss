@@ -21,4 +21,5 @@ function gss_uninstall() {
   variable_del('gss_pager_size');
   variable_del('gss_page_size');
   variable_del('gss_results_tab');
+  variable_del('gss_no_results');
 }
