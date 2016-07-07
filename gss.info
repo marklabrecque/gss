@@ -1,5 +1,0 @@
-name = Google Site Search
-description = Provides integration with Google Site Search.
-core = 7.x
-
-dependencies[] = search
