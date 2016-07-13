@@ -93,11 +93,18 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       "base_url" => 'https://www.googleapis.com/customsearch/v1',
       // "autocomplete" => TRUE,
       "page_size" => 10,
-      // "pager_size" => 9,
+      "pager_size" => 9,
       // "labels" => TRUE,
       // "number_of_results" => TRUE,
       // "info" => FALSE,
     ];
+  }
+
+  /**
+   * Gets the configured pager size.
+   */
+  public function getPagerSize() {
+    return $this->configuration['pager_size'];
   }
 
   /**
@@ -126,13 +133,10 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       '#default_value' => $this->configuration['base_url'],
     );
 
-    // @todo
-    /*
     $form['miscellaneous'] = array(
       '#type' => 'fieldset',
       '#title' => $this->t('Miscellaneous'),
     );
-    */
 
     // @todo
     /*
@@ -143,8 +147,6 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
     ];
     */
 
-    // @todo
-    /*
     $form['miscellaneous']['page_size'] = array(
       '#title' => $this->t('Page size'),
       '#type' => 'textfield',
@@ -153,10 +155,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       '#size' => 5,
       '#max_length' => 5,
     );
-    */
 
-    // @todo
-    /*
     $form['miscellaneous']['pager_size'] = array(
       '#title' => $this->t('Pager size'),
       '#type' => 'textfield',
@@ -165,7 +164,6 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       '#size' => 5,
       '#max_length' => 5,
     );
-    */
 
     // @todo
     /*
@@ -209,8 +207,8 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       'search_engine_id',
       'base_url',
       // 'autocomplete',
-      // 'page_size',
-      // 'pager_size',
+      'page_size',
+      'pager_size',
       // 'labels',
       // 'number_of_results',
       // 'info',
@@ -234,7 +232,18 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
   public function execute() {
     if ($this->isSearchExecutable()) {
 
-      $results = $this->findResults();
+      $page = pager_find_page();
+      $results = $this->findResults($page);
+
+      // API total results is unreliable. Sometimes when requesting a large
+      // offset we get no results, and
+      // $response->searchInformation->totalResults is 0. In this case return
+      // the previous page's items.
+      while ($page && !count($results)) {
+        $results = $this->findResults(--$page);
+      }
+
+      pager_default_initialize($this->count, $this->configuration['page_size']);
 
       if ($results) {
         return $this->prepareResults($results);
@@ -254,24 +263,26 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
    *   Results from search query execute() method, or NULL if the search
    *   failed.
    */
-  protected function findResults() {
+  protected function findResults($page) {
     $items = [];
 
-    // @todo
-    $page = 0;
     $page_size = $this->configuration['page_size'];
 
     // Reconcile items per page with api max 10.
+    $count = 0;
     $n = $page_size < self::MAX_NUM ? $page_size : self::MAX_NUM;
     for ($i = 0; $i < $page_size; $i += self::MAX_NUM) {
       $offset = $page * $page_size + $i;
       if (!$response = $this->getResults($n, $offset)) {
-        return NULL;
+        break;
       }
-      if (!isset($this->count)) {
+      if (isset($response->items)) {
         $this->count = $response->searchInformation->totalResults;
+        $items = array_merge($items, $response->items);
       }
-      $items = array_merge($items, $response->items);
+      else {
+        break;
+      }
     }
 
     return $items;
@@ -308,7 +319,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
         ->httpClient
         ->get($this->configuration['base_url'], $options);
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       // @todo
       return NULL;
     }
@@ -341,24 +352,6 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       ];
     }
     return $results;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildResults() {
-    $results = $this->execute();
-
-    $built = array();
-    foreach ($results as $result) {
-      $built[] = array(
-        '#theme' => 'search_result',
-        '#result' => $result,
-        '#plugin_id' => $this->getPluginId(),
-      );
-    }
-
-    return $built;
   }
 
 }
