@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use GuzzleHttp\Client;
+use Drupal\key\KeyRepository;
 
 /**
  * Handles search using Google Search Engine.
@@ -51,6 +52,13 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
   protected $httpClient;
 
   /**
+   * Key storage.
+   *
+   * @var \Drupal\key\KeyRepository
+   */
+  protected $keyRepository;
+
+  /**
    * {@inheritdoc}
    */
   static public function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -59,7 +67,8 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       $plugin_id,
       $plugin_definition,
       $container->get('language_manager'),
-      $container->get('http_client')
+      $container->get('http_client'),
+      $container->get('key.repository')
     );
   }
 
@@ -76,10 +85,13 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
    *   The language manager.
    * @param \GuzzleHttp\Client $http_client
    *   The http client.
+   * @param \Drupal\key\KeyRepository $key_repository
+   *   The key repository.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LanguageManagerInterface $language_manager, Client $http_client) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LanguageManagerInterface $language_manager, Client $http_client, KeyRepository $key_repository) {
     $this->languageManager = $language_manager;
     $this->httpClient = $http_client;
+    $this->keyRepository = $key_repository;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
@@ -114,7 +126,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
 
     $form['api_key'] = [
       '#title' => $this->t('Google search API key'),
-      '#type' => 'textfield',
+      '#type' => 'key_select',
       '#required' => TRUE,
       '#default_value' => $this->configuration['api_key'],
     ];
@@ -301,11 +313,12 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
    */
   protected function getResults($n = 1, $offset = 0) {
     $language = $this->languageManager->getCurrentLanguage()->getId();
+    $api_key = $this->keyRepository->getKey($this->configuration['api_key']);
 
     $options = array(
       'query' => array(
         'q' => $this->keywords,
-        'key' => $this->configuration['api_key'],
+        'key' => $api_key->getKeyValue(),
         'cx' => $this->configuration['search_engine_id'],
         // hl: "interface language", also used to weight results.
         'hl' => $language,
