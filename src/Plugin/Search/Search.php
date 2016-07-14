@@ -8,7 +8,6 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessibleInterface;
 use Drupal\search\Plugin\ConfigurableSearchPluginBase;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -103,11 +102,15 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       "api_key" => NULL,
       "search_engine_id" => NULL,
       "base_url" => 'https://www.googleapis.com/customsearch/v1',
+      // @todo autocomplete
       // "autocomplete" => TRUE,
       "page_size" => 10,
       "pager_size" => 9,
+      // @todo labels
       // "labels" => TRUE,
+      // @todo number_of_results
       // "number_of_results" => TRUE,
+      // @todo info
       // "info" => FALSE,
     ];
   }
@@ -150,7 +153,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       '#title' => $this->t('Miscellaneous'),
     );
 
-    // @todo
+    // @todo autocomplete
     /*
     $form['miscellaneous']['autocomplete'] = [
       '#title' => $this->t('Add Google autocomplete to search boxes'),
@@ -177,7 +180,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       '#max_length' => 5,
     );
 
-    // @todo
+    // @todo labels
     /*
     $form['miscellaneous']['labels'] = array(
       '#title' => $this->t('Show labels'),
@@ -187,7 +190,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
     );
     */
 
-    // @todo
+    // @todo number_of_results
     /*
     $form['miscellaneous']['number_of_results'] = array(
       '#title' => $this->t('Show number of results'),
@@ -197,7 +200,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
     );
     */
 
-    // @todo
+    // @todo info
     /*
     $form['miscellaneous']['info'] = array(
       '#title' => $this->t('Show extra information for each search result'),
@@ -218,11 +221,15 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       'api_key',
       'search_engine_id',
       'base_url',
+      // @todo autocomplete
       // 'autocomplete',
       'page_size',
       'pager_size',
+      // @todo labels
       // 'labels',
+      // @todo number_of_results
       // 'number_of_results',
+      // @todo info
       // 'info',
     ];
     foreach ($keys as $key) {
