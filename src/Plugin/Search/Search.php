@@ -13,6 +13,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use GuzzleHttp\Client;
 use Drupal\key\KeyRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Handles search using Google Search Engine.
@@ -106,6 +107,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       // "autocomplete" => TRUE,
       "page_size" => 10,
       "pager_size" => 9,
+      "images" => FALSE,
       // @todo labels
       // "labels" => TRUE,
       // @todo number_of_results
@@ -180,6 +182,13 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       '#max_length' => 5,
     );
 
+    $form['miscellaneous']['images'] = array(
+      '#title' => $this->t('Image Search'),
+      '#type' => 'checkbox',
+      '#description' => $this->t('Enable image search.'),
+      '#default_value' => $this->configuration['images'],
+    );
+
     // @todo labels
     /*
     $form['miscellaneous']['labels'] = array(
@@ -225,6 +234,7 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       // 'autocomplete',
       'page_size',
       'pager_size',
+      'images',
       // @todo labels
       // 'labels',
       // @todo number_of_results
@@ -313,14 +323,19 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
    * @param int $n
    *   Number of items.
    * @param int $offset
-   *    Offset of items (0-indexed).
+   *   Offset of items (0-indexed).
+   * @param string $search_type
+   *   One of:
+   *   - NULL (regular search).
+   *   - "image".
    *
    * @return object|null
    *   Decoded response from Google, or NULL on error.
    */
-  protected function getResults($n = 1, $offset = 0) {
+  protected function getResults($n = 1, $offset = 0, $search_type = NULL) {
     $language = $this->languageManager->getCurrentLanguage()->getId();
     $api_key = $this->keyRepository->getKey($this->configuration['api_key']);
+    $query = $this->getParameters();
 
     $options = array(
       'query' => array(
@@ -333,6 +348,10 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
         'num' => $n,
       ),
     );
+
+    if (@$query['type'] == 'image') {
+      $options['query']['searchType'] = 'image';
+    }
 
     try {
       $response = $this
@@ -372,6 +391,51 @@ class Search extends ConfigurableSearchPluginBase implements AccessibleInterface
       ];
     }
     return $results;
+  }
+
+  /**
+   * Gets render array for search option links.
+   */
+  public function getSearchOptions(Request $request) {
+    $options = [];
+
+    if ($this->configuration['images']) {
+      $query = $this->getParameters();
+      $active = $query['type'] == 'image';
+      $query['type'] = 'image';
+      $url = Url::createFromRequest($request);
+      $url->setOption('query', $query);
+      $url->setOption('attributes', $active ? ['class' => ['is-active']] : []);
+      $options['images'] = [
+        '#title' => $this->t('Images'),
+        '#type' => 'link',
+        '#url' => $url,
+      ];
+    }
+
+    if (count($options)) {
+      $query = $this->getParameters();
+      $active = empty($query['type']);
+      if (!$active) {
+        unset($query['type']);
+      }
+      $url = Url::createFromRequest($request);
+      $url->setOption('query', $query);
+      $url->setOption('attributes', $active ? ['class' => ['is-active']] : []);
+      $options['all'] = [
+        '#title' => $this->t('All'),
+        '#type' => 'link',
+        '#url' => $url,
+        '#weight' => -1,
+      ];
+
+      return [
+        '#theme' => 'item_list',
+        '#items' => $options,
+      ];
+    }
+
+    return [];
   }
 
 }

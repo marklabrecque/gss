@@ -15,9 +15,10 @@ class GssSearchController extends SearchController {
    * {@inheritdoc}
    */
   public function view(Request $request, SearchPageInterface $entity) {
-    $build = parent::view($request, $entity);
     /** @var \Drupal\gss\Plugin\Search\Search $plugin */
     $plugin = $entity->getPlugin();
+
+    $build = parent::view($request, $entity);
 
     // Alter the pager to set # of page links.
     $build['pager']['#quantity'] = $plugin->getPagerSize();
@@ -25,7 +26,15 @@ class GssSearchController extends SearchController {
     // so "last" link is problematic.
     $build['pager']['#tags'][4] = ' ';
 
-    return $build;
+    return [
+      '#cache' => $build['#cache'],
+      '#title' => $build['#title'],
+      'search_form' => $build['search_form'],
+      'search_results_title' => $build['search_results_title'],
+      'links' => $plugin->getSearchOptions($request),
+      'search_results' => $build['search_results'],
+      'pager' => $build['pager'],
+    ];
   }
 
 }
