@@ -30,7 +30,7 @@ class GssSearchController extends SearchController {
       '#cache' => $build['#cache'],
       '#title' => $build['#title'],
       'search_form' => $build['search_form'],
-      'search_results_title' => $build['search_results_title'],
+      'search_results_title' => @$build['search_results_title'],
       'links' => $plugin->getSearchOptions($request),
       'search_results' => $build['search_results'],
       'pager' => $build['pager'],
