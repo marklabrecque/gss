@@ -1,5 +1,7 @@
 # Google Site Search
 
+***NOTE*** Important!! Google no longer offers this service and as such, this repo/module are no longer useful.
+
 Provides integration with Google Site Search.
 
 ## Requirements
@@ -14,3 +16,5 @@ Provides integration with Google Site Search.
 3.  Install and enable this module.
 4.  Create a key to store the Google API key, via drush or at `admin/config/system/keys`.
 5.  Create a "Google Site Search" search page at `admin/config/search/pages`.
+
+
